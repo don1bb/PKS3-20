@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .fields import OrderField
 
 # Create your models here.
 
@@ -43,10 +42,3 @@ class Module(models.Model):
                                on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    order = OrderField(blank=True, for_fields=['course'])
-
-    class Meta:
-        ordering = ['order']
-
-    def __str__(self):
-        return f'{self.order}. {self.title}'
