@@ -4,7 +4,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from .fields import OrderField
 
-# Create your models here.
 
 class Subject(models.Model):
     title = models.CharField(max_length=200)
@@ -28,9 +27,6 @@ class Course(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     overview = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
-    students = models.ManyToManyField(User,
-                                      related_name='courses_joined',
-                                      blank=True)
 
     class Meta:
         ordering = ['-created']
@@ -53,6 +49,7 @@ class Module(models.Model):
     def __str__(self):
         return f'{self.order}. {self.title}'
 
+
 class Content(models.Model):
     module = models.ForeignKey(Module,
                                related_name='contents',
@@ -71,6 +68,7 @@ class Content(models.Model):
     class Meta:
         ordering = ['order']
 
+
 class ItemBase(models.Model):
     owner = models.ForeignKey(User,
                               related_name='%(class)s_related',
@@ -78,20 +76,29 @@ class ItemBase(models.Model):
     title = models.CharField(max_length=250)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
     class Meta:
         abstract = True
 
     def __str__(self):
         return self.title
 
+
 class Text(ItemBase):
     content = models.TextField()
 
-class File (ItemBase):
+
+class File(ItemBase):
     file = models.FileField(upload_to='files')
 
+
 class Image(ItemBase):
-    file = models.FileField(upload_to='images')
+       file = models.FileField(upload_to='images')
+
 
 class Video(ItemBase):
     url = models.URLField()
+
+students = models.ManyToManyField(User,
+                                  related_name='courses_joined',
+                                  blank=True)
