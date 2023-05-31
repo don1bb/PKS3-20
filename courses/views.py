@@ -3,20 +3,20 @@ from django.views.generic.base import TemplateResponseMixin, View
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, \
                                       DeleteView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, \
                                        PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.forms.models import modelform_factory
 from django.apps import apps
-from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
-from .forms import ModuleFormSet
+from django.db.models import Count
 from django.core.cache import cache
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
+from students.forms import CourseEnrollForm
+from .forms import ModuleFormSet
 from .models import Course
 from .models import Module, Content
-from django.db.models import Count
 from .models import Subject
-from django.views.generic.detail import DetailView
-from students.forms import CourseEnrollForm
 
 
 class ManageCourseListView(ListView):
@@ -220,6 +220,7 @@ class CourseListView(TemplateResponseMixin, View):
                                         'subject': subject,
                                         'courses': courses})
 
+
 class CourseDetailView(DetailView):
     model = Course
     template_name = 'courses/course/detail.html'
@@ -227,6 +228,5 @@ class CourseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['enroll_form'] = CourseEnrollForm(
-            initial={'course': self.object})
-
-    return context
+                                   initial={'course':self.object})
+        return context
